@@ -9,11 +9,17 @@ const PORT = process.env.PORT || 3100;
 const app = express();
 
 // enable cors
-app.use(cors);
+app.use(cors());
 
-app.get("/api/search/:query", (req, res) => {
+// routes
+app.get("/api/search/:query", async (req, res) => {
     try {
-        res.status(200).json({ message: true })
+        const query = req.params.query;
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${process.env.API_KEY}`
+        const result = await axios(url);
+
+        // console.log(query, result);
+        res.status(200).json({ message: true, data: result.data });
     }
     catch (err) {
         res.status(500).json({ message: err.message })
